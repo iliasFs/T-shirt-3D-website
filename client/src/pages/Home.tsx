@@ -31,7 +31,7 @@ const Home = () => {
               {...headContentAnimation}
               className="flex flex-col gap-5"
             >
-              <p className="max-w-md font-normal text-gray-600 text-xl">
+              <p className="max-w-md font-normal text-gray-600 text-base">
                 Use your imagination and create your unique t-shirt with our new
                 3D customization tool.<strong>Tees to bliss</strong>
               </p>
