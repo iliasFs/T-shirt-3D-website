@@ -24,7 +24,7 @@ const Home = () => {
           <motion.div className="home-content" {...headContainerAnimation}>
             <motion.div {...headTextAnimation}>
               <h1 className="head-text">
-                LET'S <br className="xl:block hidden" /> DO IT.
+                Create <br className="xl:block hidden" /> bliss.
               </h1>
             </motion.div>
             <motion.div
@@ -33,7 +33,7 @@ const Home = () => {
             >
               <p className="max-w-md font-normal text-gray-600 text-base">
                 Use your imagination and create your unique t-shirt with our new
-                3D customization tool.<strong>Tees to bliss</strong>
+                3D customization tool.<strong>Create bliss</strong>
               </p>
               <CustomButton
                 type="filled"
