@@ -4,7 +4,7 @@ import { getContrastingColor } from "../config/helpers";
 interface ButtonProps {
   type: string;
   title: string;
-  handleClick: () => void;
+  handleClick?: () => void;
   customStyles: string;
 }
 const CustomButton = ({

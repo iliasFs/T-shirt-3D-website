@@ -1,6 +1,5 @@
 import { DecalTypes } from "../config/constants";
 import { CustomButton } from ".";
-import { SetStateAction } from "react";
 
 interface FilePickerProps {
   file: File | string | undefined;

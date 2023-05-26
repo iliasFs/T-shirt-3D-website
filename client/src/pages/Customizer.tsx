@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSnapshot } from "valtio";
-import config from "../config/config";
+
 import state from "../store";
-import { download } from "../assets";
-import { downloadCanvasToImage, reader } from "../config/helpers";
+
+import { reader } from "../config/helpers";
 import { EditorTabs, FilterTabs, DecalTypes } from "../config/constants";
 import { fadeAnimation, slideAnimation } from "../config/motion";
 import {
@@ -14,16 +14,13 @@ import {
   FilePicker,
   Tab,
 } from "../components";
+import axios from "axios";
 
-interface FilterTab {
-  logoShirt: boolean;
-  stylishShirt: boolean;
-}
 const Customizer = () => {
   const snap = useSnapshot(state);
 
   const [file, setFile] = useState<File>();
-  const [promt, setPromt] = useState<string>("");
+  const [prompt, setPromt] = useState<string>("");
   const [generatingImage, setGeneratingImage] = useState<boolean>(false);
   const [activeEditorTab, setActiveEditorTab] = useState<string>("");
   const [activeFilterTab, setActiveFilterTab] = useState<FilterTab>({
@@ -38,19 +35,47 @@ const Customizer = () => {
       case "filepicker":
         return <FilePicker file={file} setFile={setFile} readFile={readFile} />;
       case "aipicker":
-        return <AIPicker />;
+        return (
+          <AIPicker
+            prompt={prompt}
+            setPrompt={setPromt}
+            generatingImage={generatingImage}
+            handleSubmit={handleSubmit}
+          />
+        );
       default:
         return null;
     }
   };
+
+  const handleSubmit = async (type: keyof typeof DecalTypes) => {
+    if (!prompt) return alert("Please enter a prompt");
+    try {
+      console.log(prompt);
+      setGeneratingImage(true);
+
+      const response = await axios.post("http://localhost:4000/api/v1/dalle", {
+        prompt,
+      });
+
+      const data = response.data;
+
+      handleDecals(type, `data:image/png;base64,${data.photo}`);
+    } catch (error) {
+      alert(error);
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
+
   interface FilterTab {
     logoShirt: boolean;
     stylishShirt: boolean;
     [key: string]: boolean;
   }
   function handleDecals(type: keyof typeof DecalTypes, result: unknown) {
-    const decalType = DecalTypes[type as keyof typeof DecalTypes];
-    (state as { [key: string]: any })[decalType.stateProperty] = result;
+    const decalType = DecalTypes[type];
+    (state as { [key: string]: unknown })[decalType.stateProperty] = result;
 
     if (!activeFilterTab[decalType.filterTab]) {
       handleActiveFilterTab(decalType.filterTab);
@@ -87,10 +112,7 @@ const Customizer = () => {
       });
     }
   };
-  const handleTabClick = (type: keyof typeof DecalTypes) => {
-    setActiveEditorTab("filepicker"); // Set the active editor tab to "filepicker"
-    readFile(type); // Call the readFile function with the provided type
-  };
+
   return (
     <AnimatePresence>
       {!snap.intro && (
